@@ -1,40 +1,16 @@
 #! /usr/bin/env bash
+# do-checkout: fetch tags and branches from the remote 'origin' and check them out in the working-directory
 
-information() {
-	echo "$1" >&2
-}
-
-status() {
-	echo -n "$1" >&2
-}
-
-warning() {
-	information "Warning: $1"
-}
-
-error() {
-	information "$0: Error: $1"
-}
-
-error_exit() {
-	error "$1"
-	exit 1
-}
-
-usage_error() {
-	usage
-	error "$1"
-	exit 1
-}
-
-clear_line() {
-	echo -en "\e[2K\e[1G2"
-}
-
-replace_line() {
-	echo -en "\e[2K\e[1G"
-	echo -n "$1"
-}
+print() { echo "$1" >&2; }
+status() { echo -n "$1" >&2; }
+inform() { echo "$0: $1" >&2; }
+warn() { print "Warning: $1"; }
+error() { inform "Error: $1"; }
+fail() { error "$1"; exit 1; }
+clear_line() { echo -en "\e[2K\e[1G"; }
+replace_line() { clear_line; echo -n "$1"; }
+usage_error() { usage; fail "$1"; }
+help() { usage; }
 
 usage() {
 	cat << EOF >&2
@@ -57,13 +33,10 @@ Where:
 EOF
 } #'
 
-help() {
-	usage
-}
-
 OPT_CHECKOUT_TAGS=1
 OPT_CHECKOUT_BRANCHES=
 OPT_FOLDERS=tree
+OPT_FETCH=
 
 while [ "${1:0:1}" == "-" ]; do
 	if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
@@ -86,15 +59,19 @@ while [ "${1:0:1}" == "-" ]; do
 		OPT_FOLDERS=ref
 	elif [ "$1" == "-F" ]; then
 		OPT_FOLDERS=none
+	elif [ "$1" == "--fetch" ]; then
+		OPT_FETCH=1
 	else
 		usage_error "Unknown option: $1"
 	fi
 	shift
 done
 
-[ "$1" ] && usage_error "No arguments are required!"
-
+[ "$1" ] && usage_error "No arguments required!"
 [ "$OPT_CHECKOUT_TAGS" ] || [ "$OPT_CHECKOUT_BRANCHES" ] || error_exit "At least one of tags or branches must be checked out."
+
+[ "$OPT_FETCH" ] && git fetch --tags
+git clean -fdq
 
 COUNT=$(COUNT=0; {
 	[ "$OPT_CHECKOUT_TAGS" ] && git tag
@@ -108,7 +85,7 @@ COUNT=$(COUNT=0; {
 	COUNT=$[ $COUNT + 1 ]
 	
 	git archive "--prefix=$PREFIX" "$i" | tar -x
-	information
+	print
 done; echo $COUNT))
 
-information "$COUNT $([ $COUNT -eq 1 ] && echo "tag/branch" || echo "tags/branches") checked out."
+print "$COUNT $([ $COUNT -eq 1 ] && echo "tag/branch" || echo "tags/branches") checked out."
