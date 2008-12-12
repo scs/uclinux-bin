@@ -70,7 +70,10 @@ done
 [ "$1" ] && usage_error "No arguments required!"
 [ "$OPT_CHECKOUT_TAGS" ] || [ "$OPT_CHECKOUT_BRANCHES" ] || error_exit "At least one of tags or branches must be checked out."
 
-[ "$OPT_FETCH" ] && git fetch --tags
+if [ "$OPT_FETCH" ]; then
+	git fetch --tags "origin" "+master:master"
+	git reset --hard "master" > /dev/null
+fi
 git clean -fdq
 
 COUNT=$(COUNT=0; {
