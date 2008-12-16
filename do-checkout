@@ -37,6 +37,7 @@ OPT_CHECKOUT_TAGS=1
 OPT_CHECKOUT_BRANCHES=
 OPT_FOLDERS=tree
 OPT_FETCH=
+OPT_HARVEST_HISTORY=1
 
 while [ "${1:0:1}" == "-" ]; do
 	if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
@@ -71,9 +72,11 @@ done
 [ "$OPT_CHECKOUT_TAGS" ] || [ "$OPT_CHECKOUT_BRANCHES" ] || error_exit "At least one of tags or branches must be checked out."
 
 if [ "$OPT_FETCH" ]; then
-	git fetch --tags "origin" "+master:master"
-	git reset --hard "master" > /dev/null
+	print "Fetching tags from remote origin ..."
+	git fetch --tags "origin" "master"
+	git reset --hard "origin/master" > /dev/null
 fi
+print "Cleaning previous checkouts ..."
 git clean -fdq
 
 COUNT=$(COUNT=0; {
@@ -84,11 +87,27 @@ COUNT=$(COUNT=0; {
 	[ "$OPT_FOLDERS" == "tree" ] && PREFIX="$(echo "$i" | sed -r "s/\//_/g")/"
 	[ "$OPT_FOLDERS" == "ref" ] && PREFIX="$i/"
 	
-	status "Checking out: $i ..."
+	print "Checking out: $i ..."
 	COUNT=$[ $COUNT + 1 ]
 	
 	git archive "--prefix=$PREFIX" "$i" | tar -x
-	print
 done; echo $COUNT))
 
 print "$COUNT $([ $COUNT -eq 1 ] && echo "tag/branch" || echo "tags/branches") checked out."
+
+if [ "$OPT_HARVEST_HISTORY" ]; then
+	print "Finding most recent HISTORY file ..."
+	NEWEST_HISTORY=$({
+		[ "$OPT_CHECKOUT_TAGS" ] && git tag
+		[ "$OPT_CHECKOUT_BRANCHES" ] && git branch | cut -c "3-"
+	} | grep -vF "do-checkout" | { while IFS= read i; do
+		git show "$i:HISTORY" > /dev/null 2>&1 && echo "$(git show "$i:HISTORY" > /dev/null 2>&1 | wc -l | grep -oE "[0-9]+") $i"
+	done } | sort -nr | head -n 1 | cut -d " " -f 2-)
+	
+	if [ "$NEWEST_HISTORY" ]; then
+		print "Usinf the HISTORY file from $NEWEST_HISTORY."
+		git show "$NEWEST_HISTORY:HISTORY" > "HISTORY"
+	else
+		warn "None of the checked out tags/branches has a 'HISTORY' file in it's root tree."
+	fi
+fi
