@@ -32,6 +32,7 @@ Where:
     --folders tree:
         Each checked-out tree is placed it it's own directoy.
     --folder ref, -f: Subdirectories are created for each tag/branch component.
+    -H: Do not search the checked out tags/branches for the longest 'HISTORY' file.
 EOF
 } #'
 
