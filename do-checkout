@@ -21,7 +21,7 @@ Usage:
     do-checkout <what> <how>
 
 Where:
-    <waht>: [ -t, --tags | -T, --no-tags ] [ -b, --branches | -B, --no-branches ]
+    <what>: [ -t, --tags | -T, --no-tags ] [ -b, --branches | -B, --no-branches ]
     <how>: [ --folders [ none | tree | ref ] | -f | -F
     -t, --tags: Checkout all tags.
     -T, --no-tags: Do not checkout tags.
@@ -30,7 +30,7 @@ Where:
     --folders none, -F:
         Each file in each checked-out tree is placed in the same directory.
     --folders tree:
-        Each checked-out tree is placed it it's own directoy.
+        Each checked-out tree is placed it's own directory.
     --folder ref, -f: Subdirectories are created for each tag/branch component.
     -H: Do not search the checked out tags/branches for the longest 'HISTORY' file.
 EOF
