@@ -2,13 +2,15 @@
 # do-checkout: fetch tags and branches from the remote 'origin' and check them out in the working-directory
 
 print() { echo "$1" >&2; }
-status() { echo -n "$1" >&2; }
-inform() { echo "$0: $1" >&2; }
+inform() { print "$0: $1"; }
 warn() { print "Warning: $1"; }
 error() { inform "Error: $1"; }
 fail() { error "$1"; exit 1; }
-clear_line() { echo -en "\e[2K\e[1G"; }
-replace_line() { clear_line; echo -n "$1"; }
+status() { echo -n "$1" >&2; }
+
+clear_line() { echo -en "\e[2K\e[1G" >&2; }
+replace_line() { clear_line; status "$1"; }
+
 usage_error() { usage; fail "$1"; }
 help() { usage; }
 
