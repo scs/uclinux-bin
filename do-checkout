@@ -105,7 +105,7 @@ if [ "$OPT_HARVEST_HISTORY" ]; then
 	done } | sort -nr | head -n 1 | cut -d " " -f 2-)
 	
 	if [ "$NEWEST_HISTORY" ]; then
-		print "Usinf the HISTORY file from $NEWEST_HISTORY."
+		print "Using the HISTORY file from $NEWEST_HISTORY."
 		git show "$NEWEST_HISTORY:HISTORY" > "HISTORY"
 	else
 		warn "None of the checked out tags/branches has a 'HISTORY' file in it's root tree."
