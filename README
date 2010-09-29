@@ -6,15 +6,15 @@ Checkout
 
 In this repository we keep the final uClinux binaries for the leanXcam and the indXcam.
 
-As of now (after some cleanup) we have the two branches "leanXcam" and "indXcam". To get the newest binary for one of them, do e.g.
+As of now (after some cleanup) we have the two branches "leanxcam" and "indxcam" (BE CAREFUL, the "x" in the middle is NOT capitalized, like it is in the tags!). To get the newest binary for one of them, do e.g.
 
-$ git checkout leanXcam
+$ git checkout leanxcam
 
 For a specific version, you can look at the history with 
 
 $ gitk --all
 
-and then check out the verion you want with something like
+and then check out the version you want with something like
 
 $ git checkout leanXcam/v2.1
 
@@ -25,7 +25,7 @@ To release a new version of either the leanXcam or the indXcam, first compile th
 
 Then checkout the branch you created the binary for, e.g.
 
-$ git checkout leanXcam
+$ git checkout leanxcam
 
 Then copy the new uImage and HISTORY file into this folder, overwriting the old one.
 
