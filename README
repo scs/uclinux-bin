@@ -1,0 +1,46 @@
+uClinux binary Repository
+=========================
+
+Checkout
+--------
+
+In this repository we keep the final uClinux binaries for the leanXcam and the indXcam.
+
+As of now (after some cleanup) we have the two branches "leanXcam" and "indXcam". To get the newest binary for one of them, do e.g.
+
+$ git checkout leanXcam
+
+For a specific version, you can look at the history with 
+
+$ gitk --all
+
+and then check out the verion you want with something like
+
+$ git checkout leanXcam/v2.1
+
+New Release
+-----------
+
+To release a new version of either the leanXcam or the indXcam, first compile the uclinux.git repository and then use the "do-tag" script to create a new tag and HISTORY file.
+
+Then checkout the branch you created the binary for, e.g.
+
+$ git checkout leanXcam
+
+Then copy the new uImage and HISTORY file into this folder, overwriting the old one.
+
+Commit it
+
+$ git commit -av
+
+and create a new tag, containig first the branch name, then a "/v" and then the actual version according to SCS conventions, for example
+
+$ git tag "leanXcam/v2.1-p1"
+
+History
+-------
+
+Why are there so many roots in the repository?
+
+The answer is, that earlyer the releases were created in a different way, with a do-checkout script etc... this was considered too complicated and abandoned.
+So just ignore the old roots, work only in the "master", "leanXcam" and "leanXradio" branches and use the tags, if you need really old binaries.
